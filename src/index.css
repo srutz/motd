@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* shorthand classname */
+.borderbox {
+    @apply m-4 p-2 shadow-xl rounded-lg bg-zinc-100 border border-zinc-300;
+}
+

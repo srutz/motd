@@ -1,21 +1,15 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react"
+import { Card } from "./Card"
 
 export function App() {
   console.log("Render App")
   return (
     <div title="App">
-      <Red><div>Ich bin rot</div></Red>
+      <Card><div>Ich bin rot</div></Card>
     </div>
   )
 }
 
-export function Red(props: { children?: ReactNode}) {
-  return (
-    <div style={{ background: "red "}} >
-      {props.children}
-    </div>
-  )
-}
+
 
 
 
