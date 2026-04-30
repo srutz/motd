@@ -1,10 +1,18 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { Card } from "./Card"
+
+function Button({ onClick, children }: { onClick: () => void; children: ReactNode }) {
+  return (
+    <button className="button" onClick={onClick}>
+      {children}
+    </button>
+  )
+}
 
 export function App() {
   const [ id, setId] = useState(10)
   const [ quote, setQuote] = useState<Quote|null>(null);
-  console.log("render", quote)
+  console.log({ id, quote })
   useEffect(() => {    
     (async () => { 
      const quote = await getQuote(id)
@@ -15,10 +23,10 @@ export function App() {
     return null
   }
   return (
-    <div title="App">
-      <div className="flex gap-2">
-        <button className="button" onClick={() => setId(id - 1)}>Prev</button>
-        <button className="button" onClick={() => setId(id + 1)}>Next</button>
+    <div title="App" className="flex flex-col gap-1 items-stretch">
+      <div className="flex gap-2 mt-1 self-center">
+        <Button onClick={() => setId(id - 1)}>Prev</Button>
+        <Button onClick={() => setId(id + 1)}>Next</Button>
       </div>
       <Card
         title={"Zitat " + quote.id}
