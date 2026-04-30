@@ -9,8 +9,7 @@ function Button({ onClick, children }: { onClick: () => void; children: ReactNod
   )
 }
 
-export function App() {
-  const [ id, setId] = useState(10)
+function useQuote(id: number) {
   const [ quote, setQuote] = useState<Quote|null>(null);
   console.log({ id, quote })
   useEffect(() => {    
@@ -19,6 +18,12 @@ export function App() {
      setQuote(quote)
     })()
   }, [id])
+  return quote
+}
+
+export function App() {
+  const [ id, setId] = useState(10)
+  const quote = useQuote(id)
   if (!quote) {
     return null
   }
