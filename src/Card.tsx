@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from "react"
+import { useLocalStorage } from "@uidotdev/usehooks"
+import type { ReactNode } from "react"
 import { LuTriangle } from "react-icons/lu"
 
 export 
@@ -6,7 +7,8 @@ function Card({ children, title, description}
     : { children?: ReactNode, expanded?: boolean, 
         title?: string, description?: string}) 
 {
-    const [ expanded, setExpanded ] = useState(!false)
+    //const [ expanded, setExpanded ] = useState(!false)
+    const [ expanded, setExpanded ] = useLocalStorage("card.main.key", true)
     return (
     <div className="borderbox flex flex-col">
         <CardHeader expanded={expanded} setExpanded={setExpanded}>
