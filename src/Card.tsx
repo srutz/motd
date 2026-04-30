@@ -8,18 +8,16 @@ function Card({ children, title, description}
 {
     const [ expanded, setExpanded ] = useState(!false)
     return (
-    <div className="borderbox">
-        <div className="flex flex-col gap-1">{/* layout von links nach rechts */}
-            <CardHeader expanded={expanded} setExpanded={setExpanded}>
-                {title}
-            </CardHeader>
-            <CardContent>
-                {expanded && <div className="text-gray-400 text-xs mb-2">
-                    {description}
-                </div>}
-                {expanded && children}
-            </CardContent>
-        </div>
+    <div className="borderbox flex flex-col">
+        <CardHeader expanded={expanded} setExpanded={setExpanded}>
+            {title}
+        </CardHeader>
+        <CardContent>
+            {expanded && <div className="text-gray-400 text-xs mb-2">
+                {description}
+            </div>}
+            {expanded && children}
+        </CardContent>
     </div>
     )
 }
