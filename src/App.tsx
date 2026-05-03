@@ -1,53 +1,93 @@
-import { useEffect, useState, type ReactNode } from "react"
-import { Card } from "./Card"
+import { LuLogIn, LuLogOut } from "react-icons/lu";
+import { Menubar } from "./components/Menubar";
+import { AboutPage } from "./pages/AboutPage";
+import { MainPage } from "./pages/MainPage";
 
-function Button({ onClick, children }: { onClick: () => void; children: ReactNode }) {
-  return (
-    <button className="button" onClick={onClick}>
-      {children}
-    </button>
-  )
-}
+import { useSetAtom } from "jotai";
+import { createBrowserRouter, Link, Outlet, RouterProvider, useLocation, useNavigate } from "react-router";
+import { serverStateAtom, useMyAccount } from "./hooks/useMyAccount";
+import { LoginDialog } from "./pages/LoginDialog";
+import { NotAuthorizedPage } from "./pages/NotAuthorizedPage";
+const routes = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainUi />,
+    children: [
+      {
+        path: "/",
+        element: <MainPage />
+      },
+      {
+        path: "/about",
+        element: <AboutPage />
+      },
+      {
+        path: "/login",
+        element: <LoginDialog />
+      },
+      {
+        path: "/notauthorized",
+        element: <NotAuthorizedPage />
+      },
+      {
+        path: "*",
+        element: <div>Not Found</div>
+      }
+    ]
+  }
+])
 
-function useQuote(id: number) {
-  const [ quote, setQuote] = useState<Quote|null>(null);
-  console.log({ id, quote })
-  useEffect(() => {    
-    (async () => { 
-     const quote = await getQuote(id)
-     setQuote(quote)
-    })()
-  }, [id])
-  return quote
-}
 
 export function App() {
-  const [ id, setId] = useState(10)
-  const quote = useQuote(id)
-  if (!quote) {
-    return null
-  }
   return (
-    <div title="App" className="flex flex-col gap-1 items-stretch">
-      <div className="flex gap-2 mt-1 self-center">
-        <Button onClick={() => setId(id - 1)}>Prev</Button>
-        <Button onClick={() => setId(id + 1)}>Next</Button>
-      </div>
-      <Card
-        title={"Zitat " + quote.id}
-        description={quote.author}
-        >
-        <div>{quote.quote}</div>
-      </Card>
-    </div>
+    <RouterProvider router={routes} />
   )
 }
 
-export type Quote = { id: number; quote: string; author: string  }
+function MainUi() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const myAccount = useMyAccount();
+  const loggedIn = !!myAccount
 
-async function getQuote(id: number) {
-  const resp = await fetch("https://dummyjson.com/quotes/" + encodeURIComponent(id))
-  const data: Quote = await resp.json()
-  return data
+  const setServerState = useSetAtom(serverStateAtom);
+
+  if (["/notauthorized", "/login"].indexOf(location.pathname) == -1 && !myAccount) {
+    navigate("/notauthorized");
+  }
+
+  return (
+    <div className="flex flex-col gap-2 w-screen h-screen">
+      <Menubar>
+        <div className="text-lg font-bold mr-8">My App</div>
+        {loggedIn && (
+          <>
+            <Link to="/">Home</Link>
+            <Link to="/about">About</Link>
+          </>
+        )}
+        <div className="grow" />
+        {loggedIn ? (
+          <>
+            <div>Logged in as <span className="font-semibold">{myAccount.email}</span></div>
+            <button className="ml-2 mr-4" onClick={() => {
+              setServerState({
+                loggedIn: false,
+                user: null
+              })
+              navigate("/")
+            }}>
+              <LuLogOut size={18} />
+            </button>
+          </>
+        ) : (
+          <button className="mr-4" onClick={() => navigate("/login")}>
+            <LuLogIn size={18} />
+          </button>
+        )}
+      </Menubar>
+      <Outlet></Outlet>
+    </div>
+  )
 }
 
