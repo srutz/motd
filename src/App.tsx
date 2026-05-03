@@ -3,9 +3,9 @@ import { Menubar } from "./components/Menubar";
 import { AboutPage } from "./pages/AboutPage";
 import { MainPage } from "./pages/MainPage";
 
-import { useSetAtom } from "jotai";
 import { createBrowserRouter, Link, Outlet, RouterProvider, useLocation, useNavigate } from "react-router";
-import { serverStateAtom, useMyAccount } from "./hooks/useMyAccount";
+import { useMyAccount } from "./hooks/useMyAccount";
+import { useLogin } from "./hooks/useLogin";
 import { LoginDialog } from "./pages/LoginDialog";
 import { NotAuthorizedPage } from "./pages/NotAuthorizedPage";
 const routes = createBrowserRouter([
@@ -50,7 +50,7 @@ function MainUi() {
   const myAccount = useMyAccount();
   const loggedIn = !!myAccount
 
-  const setServerState = useSetAtom(serverStateAtom);
+  const { login: logout } = useLogin();
 
   if (["/notauthorized", "/login"].indexOf(location.pathname) == -1 && !myAccount) {
     navigate("/notauthorized");
@@ -71,11 +71,10 @@ function MainUi() {
           <>
             <div>Logged in as <span className="font-semibold">{myAccount.email}</span></div>
             <button className="ml-2 mr-4" onClick={() => {
-              setServerState({
-                loggedIn: false,
-                user: null
-              })
-              navigate("/")
+              logout(
+                { loggedIn: false, user: null },
+                { onSuccess: () => navigate("/") }
+              );
             }}>
               <LuLogOut size={18} />
             </button>

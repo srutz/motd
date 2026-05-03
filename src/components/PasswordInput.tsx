@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { cn } from "../lib/utils";
 
@@ -6,6 +6,7 @@ interface PasswordInputProps {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
   name?: string;
   id?: string;
@@ -16,6 +17,7 @@ export function PasswordInput({
   placeholder = "Password",
   value,
   onChange,
+  onKeyDown,
   className,
   name,
   id,
@@ -30,6 +32,7 @@ export function PasswordInput({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
+        onKeyDown={onKeyDown}
         name={name}
         id={id}
         autoComplete={autoComplete}
