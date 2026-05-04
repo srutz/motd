@@ -5,6 +5,7 @@ import { HomePage } from './HomePage.tsx'
 import { AboutPage } from './AboutPage.tsx'
 import { ImprintPage } from './ImprintPage.tsx'
 import { Frame } from './Frame.tsx'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const rootElement = document.getElementById('root')!
 const reactRoot = createRoot(rootElement)
@@ -18,5 +19,11 @@ const router = createBrowserRouter([
     ] },
 ])
 
-reactRoot.render(<RouterProvider router={router} />)
+const queryClient = new QueryClient();
+
+reactRoot.render(
+    <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+    </QueryClientProvider>
+)
 
