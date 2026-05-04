@@ -1,8 +1,10 @@
 import { useProduct } from "./useProduct"
 import type { Product } from "./types"
+import { useState } from "react"
 
 export function HomePage() {
-    const { data: product, isLoading } = useProduct(18)
+    const [ id, setId] = useState(17);
+    const { data: product, isLoading } = useProduct(id)
     
     if (isLoading) {
         return <div className="p-8 text-center">Loading...</div>
@@ -14,6 +16,10 @@ export function HomePage() {
     
     return (
         <div className="p-8 max-w-6xl mx-auto">
+            <div className="flex gap-4">
+                <button className="button" onClick={() => setId(id - 1)}>Back</button>
+                <button className="button" onClick={() => setId(id + 1)}>Next</button>
+            </div>
             <ProductPanel product={product} />
         </div>
     )
@@ -29,13 +35,13 @@ function ProductPanel({ product }: { product: Product }) {
     return (
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             {/* Product Images Section */}
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-2">
                 {/* Main Image */}
-                <div className="relative bg-gradient-to-br from-zinc-100 to-zinc-50">
+                <div className="relative">
                     <img 
                         src={product.thumbnail} 
                         alt={product.title}
-                        className="w-full h-96 object-cover"
+                        className="h-64 object-cover"
                     />
                     {product.discountPercentage > 0 && (
                         <div className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full font-bold shadow-lg">
@@ -50,7 +56,7 @@ function ProductPanel({ product }: { product: Product }) {
                 </div>
                 
                 {/* Product Details */}
-                <div className="p-8 flex flex-col">
+                <div className="px-8 py-2 flex flex-col">
                     {/* Category & Brand */}
                     <div className="flex gap-2 mb-4">
                         <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
