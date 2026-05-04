@@ -1,24 +1,22 @@
 import { useProduct } from "./useProduct"
 import type { Product } from "./types"
-import { useState } from "react"
+import { useNavigate, useParams } from "react-router";
 
 export function HomePage() {
-    const [ id, setId] = useState(17);
-    const { data: product, isLoading } = useProduct(id)
+    const { id } = useParams();
+    const idNum = Number.parseInt(id || "1")
+    const { data: product, isLoading } = useProduct(idNum)
+    const navigate = useNavigate();
     
-    if (isLoading) {
-        return <div className="p-8 text-center">Loading...</div>
-    }
-    
-    if (!product) {
-        return <div className="p-8 text-center">Product not found</div>
-    }
-    
+    if (isLoading) { return <div className="p-8 text-center">Loading...</div> }    
+    if (!product) { return <div className="p-8 text-center">Product not found</div> }    
     return (
         <div className="p-8 max-w-6xl mx-auto">
             <div className="flex gap-4">
-                <button className="button" onClick={() => setId(id - 1)}>Back</button>
-                <button className="button" onClick={() => setId(id + 1)}>Next</button>
+                <button className="button" onClick={() => navigate("/" + (idNum - 1))}>
+                    Back</button>
+                <button className="button" onClick={() => navigate("/" + (idNum + 1))}>
+                    Next</button>
             </div>
             <ProductPanel product={product} />
         </div>

@@ -13,6 +13,7 @@ const reactRoot = createRoot(rootElement)
 const router = createBrowserRouter([
     { path: "/", element: <Frame/>, children: [
         { path: "/", element: <HomePage/> },
+        { path: "/:id", element: <HomePage/> },
         { path: "/about", element: <AboutPage/> },
         { path: "/imprint", element: <ImprintPage/> },
         { path: "*", element: <div>Fallback route</div> },
