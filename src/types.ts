@@ -1,47 +1,55 @@
-interface ProductDimensions {
-  width: number;
-  height: number;
-  depth: number;
-}
+import { z } from 'zod';
 
-interface ProductReview {
-  rating: number;
-  comment: string;
-  date: string; // ISO 8601 date string
-  reviewerName: string;
-  reviewerEmail: string;
-}
 
-interface ProductMeta {
-  createdAt: string; // ISO 8601 date string
-  updatedAt: string; // ISO 8601 date string
-  barcode: string;
-  qrCode: string;
-}
+const ProductDimensionsSchema = z.object({
+  width: z.number(),
+  height: z.number(),
+  depth: z.number(),
+});
 
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  tags: string[];
-  brand: string;
-  sku: string;
-  weight: number;
-  dimensions: ProductDimensions;
-  warrantyInformation: string;
-  shippingInformation: string;
-  availabilityStatus: string;
-  reviews: ProductReview[];
-  returnPolicy: string;
-  minimumOrderQuantity: number;
-  meta: ProductMeta;
-  images: string[];
-  thumbnail: string;
-}
+const ProductReviewSchema = z.object({
+  rating: z.number(),
+  comment: z.string(),
+  date: z.string(), // ISO 8601 date string
+  reviewerName: z.string(),
+  reviewerEmail: z.string().email(),
+});
 
-export { type Product }
+const ProductMetaSchema = z.object({
+  createdAt: z.string(), // ISO 8601 date string
+  updatedAt: z.string(), // ISO 8601 date string
+  barcode: z.string(),
+  qrCode: z.string(),
+});
+
+const ProductSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string(),
+  category: z.string(),
+  price: z.number(),
+  discountPercentage: z.number(),
+  rating: z.number(),
+  stock: z.number(),
+  tags: z.array(z.string()),
+  brand: z.string(),
+  sku: z.string(),
+  weight: z.number(),
+  dimensions: ProductDimensionsSchema,
+  warrantyInformation: z.string(),
+  shippingInformation: z.string(),
+  availabilityStatus: z.string(),
+  reviews: z.array(ProductReviewSchema),
+  returnPolicy: z.string(),
+  minimumOrderQuantity: z.number(),
+  meta: ProductMetaSchema,
+  images: z.array(z.string()),
+  thumbnail: z.string(),
+});
+
+type ProductDimensions = z.infer<typeof ProductDimensionsSchema>;
+type ProductReview = z.infer<typeof ProductReviewSchema>;
+type ProductMeta = z.infer<typeof ProductMetaSchema>;
+type Product = z.infer<typeof ProductSchema>;
+
+export { type Product, type ProductDimensions, type ProductReview, type ProductMeta, ProductSchema, ProductDimensionsSchema, ProductReviewSchema, ProductMetaSchema };

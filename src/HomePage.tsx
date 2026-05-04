@@ -31,14 +31,11 @@ function useProductWarmup(from: number, to: number) {
 export function HomePage() {
     const { id } = useParams();
     const idNum = Number.parseInt(id || "1")
-    const { data: product, isLoading, refetch, error } = useProduct(idNum)
+    const { data: product, isLoading, refetch } = useProduct(idNum)
     const navigate = useNavigate();
-    useProductWarmup(1, 10)
+    //useProductWarmup(1, 10)
     
     if (isLoading) { return <div className="p-8 text-center">Loading...</div> }    
-    if (error) {
-        return <div>Error occured: {error.toString()}</div>
-    }
     if (!product) { return <div className="p-8 text-center">Product not found</div> }  
     return (
         <div className="p-8 max-w-6xl mx-auto">
