@@ -1,15 +1,45 @@
-import { useProduct } from "./useProduct"
+import { getProduct, useProduct } from "./useProduct"
 import type { Product } from "./types"
 import { useNavigate, useParams } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+
+function useProductWarmup(from: number, to: number) {
+    const queryClient = useQueryClient();
+    useEffect(() => {
+        (async () => {
+            for (let i = from; i <= to; i++) {
+                const product = await queryClient.ensureQueryData({
+                    queryKey: [ "product" , i],
+                    queryFn: async() => getProduct(i)
+                })
+                // Preload thumbnail image
+                if (product.thumbnail) {
+                    const img = new Image();
+                    img.src = product.thumbnail;
+                }
+                // Preload all product images
+                product.images?.forEach((imageUrl: string) => {
+                    const img = new Image();
+                    img.src = imageUrl;
+                });
+            }
+        })()
+    }, [ queryClient, from, to ])
+}
 
 export function HomePage() {
     const { id } = useParams();
     const idNum = Number.parseInt(id || "1")
-    const { data: product, isLoading } = useProduct(idNum)
+    const { data: product, isLoading, refetch, error } = useProduct(idNum)
     const navigate = useNavigate();
+    useProductWarmup(1, 10)
     
     if (isLoading) { return <div className="p-8 text-center">Loading...</div> }    
-    if (!product) { return <div className="p-8 text-center">Product not found</div> }    
+    if (error) {
+        return <div>Error occured: {error.toString()}</div>
+    }
+    if (!product) { return <div className="p-8 text-center">Product not found</div> }  
     return (
         <div className="p-8 max-w-6xl mx-auto">
             <div className="flex gap-4">
@@ -17,6 +47,7 @@ export function HomePage() {
                     Back</button>
                 <button className="button" onClick={() => navigate("/" + (idNum + 1))}>
                     Next</button>
+                <button className="button" onClick={() => refetch()}>Reload</button>
             </div>
             <ProductPanel product={product} />
         </div>
@@ -39,7 +70,7 @@ function ProductPanel({ product }: { product: Product }) {
                     <img 
                         src={product.thumbnail} 
                         alt={product.title}
-                        className="h-64 object-cover"
+                        className="w-full h-96 object-cover"
                     />
                     {product.discountPercentage > 0 && (
                         <div className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full font-bold shadow-lg">
