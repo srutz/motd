@@ -6,6 +6,7 @@ import { AboutPage } from './AboutPage.tsx'
 import { ImprintPage } from './ImprintPage.tsx'
 import { Frame } from './Frame.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { NuqsAdapter } from 'nuqs/adapters/react'
 
 const rootElement = document.getElementById('root')!
 const reactRoot = createRoot(rootElement)
@@ -23,8 +24,10 @@ const router = createBrowserRouter([
 const queryClient = new QueryClient();
 
 reactRoot.render(
-    <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-    </QueryClientProvider>
+    <NuqsAdapter>
+        <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+        </QueryClientProvider>
+    </NuqsAdapter>
 )
 
