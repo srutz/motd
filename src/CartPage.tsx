@@ -1,24 +1,22 @@
 import { useCart } from "./Cart";
 
 export function CartPage() {
-    const { items, totalPrice, modifyQuantity, remove } = useCart()
+    const { items, totalPrice, modifyQuantity } = useCart()
     return (
         <div className="p-8 max-w-6xl mx-auto">
             <CartView 
                 items={items} 
                 totalPrice={totalPrice()} 
                 onQuantityChange={modifyQuantity}
-                onRemove={remove}
             />
         </div>
     )
 }
 
-function CartView({ items, totalPrice, onQuantityChange, onRemove }: { 
+function CartView({ items, totalPrice, onQuantityChange }: { 
     items: Array<{ id: number; quantity: number; price: number }>,
     totalPrice: number,
-    onQuantityChange: (id: number, quantity: number) => void,
-    onRemove: (id: number) => void
+    onQuantityChange: (id: number, quantity: number) => void
 }) {
     const priceFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -86,14 +84,6 @@ function CartView({ items, totalPrice, onQuantityChange, onRemove }: {
                                     {priceFormatter.format(item.price * item.quantity)}
                                 </div>
                             </div>
-
-                            {/* Remove Button */}
-                            <button 
-                                onClick={() => onRemove(item.id)}
-                                className="px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-semibold transition-colors"
-                            >
-                                Remove
-                            </button>
                         </div>
                     </div>
                 ))}
