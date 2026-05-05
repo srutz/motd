@@ -3,6 +3,7 @@ import type { Product } from "./types"
 import { useNavigate, useParams } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useCart } from "./Cart";
 
 function useProductWarmup(from: number, to: number) {
     const queryClient = useQueryClient();
@@ -33,18 +34,38 @@ export function HomePage() {
     const idNum = Number.parseInt(id || "1")
     const { data: product, isLoading, refetch } = useProduct(idNum)
     const navigate = useNavigate();
+    const cart = useCart()
     //useProductWarmup(1, 10)
+
+    const currentItem = cart.items.find(item => product && item.id === product.id)
+    console.log("render product", currentItem)
+    const currentQuantity = currentItem ? currentItem.quantity : 0
+    const handleAdd = () => {
+        if (!currentItem) {
+            cart.add({ id: product.id, quantity: 1, price: product.price })
+        } else {
+            cart.modifyQuantity(product.id, currentQuantity + 1)
+        }
+    }
+    const handleRemove = () => {
+        cart.modifyQuantity(product.id, currentQuantity - 1)
+    }
     
     if (isLoading) { return <div className="p-8 text-center">Loading...</div> }    
     if (!product) { return <div className="p-8 text-center">Product not found</div> }  
     return (
         <div className="p-8 max-w-6xl mx-auto">
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
                 <button className="button" onClick={() => navigate("/" + (idNum - 1))}>
                     Back</button>
                 <button className="button" onClick={() => navigate("/" + (idNum + 1))}>
                     Next</button>
                 <button className="button" onClick={() => refetch()}>Reload</button>
+
+                <div>Anzahl: {currentQuantity}</div>
+                <button className="button" onClick={handleAdd}>Add to cart</button>
+                <button className="button" onClick={handleRemove}>Remove from cart</button>
+
             </div>
             <ProductPanel product={product} />
         </div>

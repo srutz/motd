@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-type CartItem = { id: number; quantity: number; title: string; price: number }
+type CartItem = { id: number; quantity: number; price: number }
 
 type CartStore = {
     items:          CartItem[]
