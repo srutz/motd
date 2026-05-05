@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { immer } from "zustand/middleware/immer"
 
 type CartItem = { id: number; quantity: number; price: number }
 
@@ -14,22 +15,33 @@ type CartStore = {
 
 export const useCart = create<CartStore>()(
     persist(
-        (set, get) => ({
+        immer((set, get) => ({
             items: [],
             add: (item) =>
-                set(state => ({ items: [...state.items, item] })),
+                set(state => {
+                    state.items.push(item)
+                }),
             remove: (id) =>
-                set(state => ({ items: state.items.filter(i => i.id !== id) })),
+                set(state => {
+                    const index = state.items.findIndex(i => i.id === id)
+                    if (index !== -1) state.items.splice(index, 1)
+                }),
             modifyQuantity: (id, quantity) =>
-                set(state => ({
-                    items: quantity <= 0
-                        ? state.items.filter(i => i.id !== id)
-                        : state.items.map(i => i.id === id ? { ...i, quantity } : i),
-                })),
-            clear: () => set({ items: [] }),
+                set(state => {
+                    const item = state.items.find(i => i.id === id)
+                    if (item) {
+                        if (quantity <= 0) {
+                            const index = state.items.findIndex(i => i.id === id)
+                            if (index !== -1) state.items.splice(index, 1)
+                        } else {
+                            item.quantity = quantity
+                        }
+                    }
+                }),
+            clear: () => set(state => { state.items = [] }),
             totalPrice: () =>
                 get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
-        }),
+        })),
         {
             name: "cart-storage",
         }
