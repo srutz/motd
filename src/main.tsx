@@ -6,6 +6,7 @@ import { AboutPage } from './AboutPage.tsx'
 import { ImprintPage } from './ImprintPage.tsx'
 import { Frame } from './Frame.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { CartPage } from './CartPage.tsx'
 
 const rootElement = document.getElementById('root')!
 const reactRoot = createRoot(rootElement)
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     { path: "/", element: <Frame/>, children: [
         { path: "/", element: <HomePage/> },
         { path: "/:id", element: <HomePage/> },
+        { path: "/cart", element: <CartPage/> },
         { path: "/about", element: <AboutPage/> },
         { path: "/imprint", element: <ImprintPage/> },
         { path: "*", element: <div>Fallback route</div> },

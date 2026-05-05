@@ -1,8 +1,9 @@
 import { LuSatellite, LuShoppingBasket } from "react-icons/lu"
-import { NavLink } from "react-router"
+import { NavLink, useNavigate } from "react-router"
 import { useCart } from "./Cart";
 
 export function Menubar() {
+    const navigate = useNavigate();
     const { totalPrice } = useCart();
     const priceFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -17,11 +18,13 @@ export function Menubar() {
         <NavLink to="/imprint">Imprint</NavLink>
         <div className="grow"></div>
         <div className="relative">
-            <LuShoppingBasket size={22}></LuShoppingBasket>
-            <div className="p-1 text-xs top-[16px] left-[-32px] absolute h-8 bg-red-300 rounded-full
-                    flex flex-col justify-center items-center">
-                {priceFormatter.format(totalPrice())}
-            </div>
+            <button type="button" onClick={() => navigate("cart")}>
+                <LuShoppingBasket size={22}></LuShoppingBasket>
+                <div className="p-1 text-xs top-[16px] left-[-32px] absolute h-8 bg-red-300 rounded-full
+                        flex flex-col justify-center items-center">
+                    {priceFormatter.format(totalPrice())}
+                </div>
+            </button>
         </div>
     </div>
 )}
